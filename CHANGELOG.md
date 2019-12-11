@@ -1,3 +1,38 @@
+## [13.12.2](https://github.com/streamich/react-use/compare/v13.12.1...v13.12.2) (2019-12-10)
+
+
+### Bug Fixes
+
+* **useSet:** "has" method in useSet updated to reference latest set object ([4f1d8c2](https://github.com/streamich/react-use/commit/4f1d8c2cbd773f2a26e2eee4fbad88883ea4b405))
+
+## [13.12.1](https://github.com/streamich/react-use/compare/v13.12.0...v13.12.1) (2019-12-09)
+
+
+### Bug Fixes
+
+* **useMap:** methods with side effects should be stable across renders. ([020b4db](https://github.com/streamich/react-use/commit/020b4dbc6c47ab25243ab8af257dd045e6c1bf6d))
+
+# [13.12.0](https://github.com/streamich/react-use/compare/v13.11.0...v13.12.0) (2019-12-09)
+
+
+### Features
+
+* useScrollbarWidth hook; ([#825](https://github.com/streamich/react-use/issues/825)) ([125c7e9](https://github.com/streamich/react-use/commit/125c7e96a188405aea36e94ed1bb3d984232b2f6))
+
+# [13.11.0](https://github.com/streamich/react-use/compare/v13.10.2...v13.11.0) (2019-12-08)
+
+
+### Features
+
+* 🎸 add useUnmountPromise hook ([01421bc](https://github.com/streamich/react-use/commit/01421bc634b941044e95c611f37eb87339486241))
+
+## [13.10.2](https://github.com/streamich/react-use/compare/v13.10.1...v13.10.2) (2019-12-05)
+
+
+### Bug Fixes
+
+* useUpdate hitting maxInt, failing to trigger rerender ([93e7291](https://github.com/streamich/react-use/commit/93e72910abf2dafe5bdff625a21f633afd6e52c5))
+
 ## [13.10.1](https://github.com/streamich/react-use/compare/v13.10.0...v13.10.1) (2019-12-03)
 
 
