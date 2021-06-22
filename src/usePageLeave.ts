@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { off, on } from './misc/util';
 
 const usePageLeave = (onPageLeave, args = []) => {
   useEffect(() => {
@@ -6,7 +7,7 @@ const usePageLeave = (onPageLeave, args = []) => {
       return;
     }
 
-    const handler = event => {
+    const handler = (event) => {
       event = event ? event : (window.event as any);
       const from = event.relatedTarget || event.toElement;
       if (!from || (from as any).nodeName === 'HTML') {
@@ -14,9 +15,9 @@ const usePageLeave = (onPageLeave, args = []) => {
       }
     };
 
-    document.addEventListener('mouseout', handler);
+    on(document, 'mouseout', handler);
     return () => {
-      document.removeEventListener('mouseout', handler);
+      off(document, 'mouseout', handler);
     };
   }, args);
 };

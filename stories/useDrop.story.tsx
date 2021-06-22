@@ -1,4 +1,3 @@
-import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import { useDrop } from '../src';
@@ -6,9 +5,9 @@ import ShowDocs from './util/ShowDocs';
 
 const Demo = () => {
   const state = useDrop({
-    onFiles: action('onFiles'),
-    onUri: action('onUri'),
-    onText: action('onText'),
+    onFiles: (...args) => console.log('onFiles', ...args),
+    onUri: (...args) => console.log('onUri', ...args),
+    onText: (...args) => console.log('onText', ...args),
   });
 
   const style: React.CSSProperties = {
@@ -49,6 +48,6 @@ const Demo = () => {
   );
 };
 
-storiesOf('UI|useDrop', module)
+storiesOf('UI/useDrop', module)
   .add('Docs', () => <ShowDocs md={require('../docs/useDrop.md')} />)
   .add('Demo', () => <Demo />);

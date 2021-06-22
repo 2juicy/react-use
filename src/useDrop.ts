@@ -1,7 +1,5 @@
-import * as React from 'react';
-import useMountedState from './useMountedState';
-
-const { useState, useMemo, useCallback, useEffect } = React;
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { noop, off, on } from './misc/util';
 
 export interface DropAreaState {
   over: boolean;
@@ -21,14 +19,7 @@ export interface DropAreaOptions {
   onUri?: (url: string, event?) => void;
 }
 
-const noop = () => {};
-/*
-const defaultState: DropAreaState = {
-  over: false,
-};
-*/
-
-const createProcess = (options: DropAreaOptions, mounted: boolean) => (dataTransfer: DataTransfer, event) => {
+const createProcess = (options: DropAreaOptions) => (dataTransfer: DataTransfer, event) => {
   const uri = dataTransfer.getData('text/uri-list');
 
   if (uri) {
@@ -41,29 +32,26 @@ const createProcess = (options: DropAreaOptions, mounted: boolean) => (dataTrans
     return;
   }
 
-  if (dataTransfer.items && dataTransfer.items.length) {
-    dataTransfer.items[0].getAsString(text => {
-      if (mounted) {
-        (options.onText || noop)(text, event);
-      }
-    });
+  if (event.clipboardData) {
+    const text = event.clipboardData.getData('text');
+    (options.onText || noop)(text, event);
+    return;
   }
 };
 
 const useDrop = (options: DropAreaOptions = {}, args = []): DropAreaState => {
   const { onFiles, onText, onUri } = options;
-  const isMounted = useMountedState();
   const [over, setOverRaw] = useState<boolean>(false);
   const setOver = useCallback(setOverRaw, []);
-  const process = useMemo(() => createProcess(options, isMounted()), [onFiles, onText, onUri]);
+  const process = useMemo(() => createProcess(options), [onFiles, onText, onUri]);
 
   useEffect(() => {
-    const onDragOver = event => {
+    const onDragOver = (event) => {
       event.preventDefault();
       setOver(true);
     };
 
-    const onDragEnter = event => {
+    const onDragEnter = (event) => {
       event.preventDefault();
       setOver(true);
     };
@@ -76,32 +64,32 @@ const useDrop = (options: DropAreaOptions = {}, args = []): DropAreaState => {
       setOver(false);
     };
 
-    const onDrop = event => {
+    const onDrop = (event) => {
       event.preventDefault();
       setOver(false);
       process(event.dataTransfer, event);
     };
 
-    const onPaste = event => {
+    const onPaste = (event) => {
       process(event.clipboardData, event);
     };
 
-    document.addEventListener('dragover', onDragOver);
-    document.addEventListener('dragenter', onDragEnter);
-    document.addEventListener('dragleave', onDragLeave);
-    document.addEventListener('dragexit', onDragExit);
-    document.addEventListener('drop', onDrop);
+    on(document, 'dragover', onDragOver);
+    on(document, 'dragenter', onDragEnter);
+    on(document, 'dragleave', onDragLeave);
+    on(document, 'dragexit', onDragExit);
+    on(document, 'drop', onDrop);
     if (onText) {
-      document.addEventListener('paste', onPaste);
+      on(document, 'paste', onPaste);
     }
 
     return () => {
-      document.removeEventListener('dragover', onDragOver);
-      document.removeEventListener('dragenter', onDragEnter);
-      document.removeEventListener('dragleave', onDragLeave);
-      document.removeEventListener('dragexit', onDragExit);
-      document.removeEventListener('drop', onDrop);
-      document.removeEventListener('paste', onPaste);
+      off(document, 'dragover', onDragOver);
+      off(document, 'dragenter', onDragEnter);
+      off(document, 'dragleave', onDragLeave);
+      off(document, 'dragexit', onDragExit);
+      off(document, 'drop', onDrop);
+      off(document, 'paste', onPaste);
     };
   }, [process, ...args]);
 

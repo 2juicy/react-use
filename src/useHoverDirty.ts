@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
+import { off, on } from './misc/util';
 
 // kudos: https://usehooks.com/
-const useHoverDirty = (ref, enabled: boolean = true) => {
+const useHoverDirty = (ref: RefObject<Element>, enabled: boolean = true) => {
   if (process.env.NODE_ENV === 'development') {
     if (typeof ref !== 'object' || typeof ref.current === 'undefined') {
       console.error('useHoverDirty expects a single ref argument.');
@@ -15,14 +16,17 @@ const useHoverDirty = (ref, enabled: boolean = true) => {
     const onMouseOut = () => setValue(false);
 
     if (enabled && ref && ref.current) {
-      ref.current.addEventListener('mouseover', onMouseOver);
-      ref.current.addEventListener('mouseout', onMouseOut);
+      on(ref.current, 'mouseover', onMouseOver);
+      on(ref.current, 'mouseout', onMouseOut);
     }
 
+    // fixes react-hooks/exhaustive-deps warning about stale ref elements
+    const { current } = ref;
+
     return () => {
-      if (enabled && ref && ref.current) {
-        ref.current.removeEventListener('mouseover', onMouseOver);
-        ref.current.removeEventListener('mouseout', onMouseOut);
+      if (enabled && current) {
+        off(current, 'mouseover', onMouseOver);
+        off(current, 'mouseout', onMouseOut);
       }
     };
   }, [enabled, ref]);

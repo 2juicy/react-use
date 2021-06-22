@@ -2,9 +2,6 @@ import { renderHook } from '@testing-library/react-hooks';
 import { useCallback } from 'react';
 import useAsync from '../src/useAsync';
 
-// NOTE: these tests cause console errors.
-//       maybe we should test in a real environment instead
-//       of a fake one?
 describe('useAsync', () => {
   it('should be defined', () => {
     expect(useAsync).toBeDefined();
@@ -15,7 +12,7 @@ describe('useAsync', () => {
     let callCount = 0;
 
     const resolver = async () => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         callCount++;
 
         const wait = setTimeout(() => {
@@ -34,8 +31,9 @@ describe('useAsync', () => {
       });
     });
 
-    it('initially starts loading', () => {
+    it('initially starts loading', async () => {
       expect(hook.result.current.loading).toEqual(true);
+      await hook.waitForNextUpdate();
     });
 
     it('resolves', async () => {
@@ -75,8 +73,9 @@ describe('useAsync', () => {
       });
     });
 
-    it('initially starts loading', () => {
+    it('initially starts loading', async () => {
       expect(hook.result.current.loading).toBeTruthy();
+      await hook.waitForNextUpdate();
     });
 
     it('resolves', async () => {
@@ -107,7 +106,7 @@ describe('useAsync', () => {
         return 'new value';
       };
 
-      beforeEach(done => {
+      beforeEach((done) => {
         callCount = 0;
 
         hook = renderHook(({ fn }) => useAsync(fn, [fn]), {
@@ -138,17 +137,17 @@ describe('useAsync', () => {
       let callCount = 0;
       let hook;
 
-      const staticFunction = async counter => {
+      const staticFunction = async (counter) => {
         callCount++;
         return `counter is ${counter} and callCount is ${callCount}`;
       };
 
-      beforeEach(done => {
+      beforeEach((done) => {
         callCount = 0;
         hook = renderHook(
           ({ fn, counter }) => {
             const callback = useCallback(() => fn(counter), [counter]);
-            return useAsync<string>(callback, [callback]);
+            return useAsync<any>(callback, [callback]);
           },
           {
             initialProps: {
